@@ -28,7 +28,7 @@ class Root extends React.Component{
                   progress : Math.round(e.jPlayer.status.currentTime)
               });
          })
-     },
+     }
 
     componentWillUnmount(){
         $('#player').unbind($.jPlayer.event.timeupdate);
