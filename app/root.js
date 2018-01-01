@@ -1,16 +1,17 @@
 import React from 'react';
 import Header from './components/header';
-import Progress from './components/progress'
-
-
+import Player from "./page/player";
+import {MUSIC_LIST} from './config/musiclist'
 
 class Root extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            progress: '-'
-        };
-    }
+ constructor(props){
+     super(props);
+     this.state= {
+         musicList: MUSIC_LIST,
+         currentMusicItem: MUSIC_LIST[0],
+         isPlay:null
+     }
+ }
 
      componentDidMount(){
 
@@ -23,23 +24,18 @@ class Root extends React.Component{
              supplied:'mp3',
              wmode:'window'
          });
-         $('#player').bind($.jPlayer.event.timeupdate, (e) =>{
-              this.setState({
-                  progress : e.jPlayer.status.currentPercentAbsolute
-              });
-         })
      }
 
     componentWillUnmount(){
-        $('#player').unbind($.jPlayer.event.timeupdate);
+
     }
+
 
     render(){
         return(
             <div>
                 <Header />
-                <div id="player"> </div>
-                <Progress progress={this.state.progress}> </Progress>
+                <Player currentMusicItem={this.state.currentMusicItem}/>
             </div>
 
         )
