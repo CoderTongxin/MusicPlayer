@@ -3,11 +3,13 @@ import Progress from '../components/progress'
 import './player.less'
 
 let duration = null;
+
 class Player extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            progress: '-'
+            progress: 0,
+            volume: 0,
         };
     }
     componentDidMount(){
@@ -15,7 +17,9 @@ class Player extends React.Component{
         $('#player').bind($.jPlayer.event.timeupdate, (e) =>{
             duration = e.jPlayer.status.duration;
             this.setState({
-                progress : e.jPlayer.status.currentPercentAbsolute
+                volume: e.jPlayer.options.volume*100,
+                progress : e.jPlayer.status.currentPercentAbsolute,
+                isPlay:true
             });
         })
     }
@@ -24,11 +28,19 @@ class Player extends React.Component{
     }
 
     progressChangeHandler(progressPercent){
-        console.log(duration);
         $('#player').jPlayer('play',duration * progressPercent);
+        $('#player').jPlayer(this.state.isPlay?'play':'pause',duration * progressPercent);
     }
-    changeVolumeHandler(){
 
+    changeVolumeHandler(progress){
+        $('#player').jPlayer('volume',progress);
+    }
+
+    play(){
+        this.state.isPlay ? $('#player').jPlayer('pause') : $('#player').jPlayer('play');
+        this.setState({
+            isPlay:!this.state.isPlay
+        })
     }
     render(){
         return(
@@ -42,7 +54,7 @@ class Player extends React.Component{
                             <div className="volume-container">
                                 <i className="icon-volume rt" style={{top:5,left:-5}}> </i>
                                 <div className="volume-wrapper">
-                                    <Progress progress={this.state.volume} onProgressChange={this.changeVolumeHandler} />
+                                    <Progress progress={this.state.volume} onProgressChange={this.changeVolumeHandler} barColor="#aaa"/>
                                 </div>
                             </div>
                         </div>
