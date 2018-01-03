@@ -1,6 +1,8 @@
 import React from 'react'
 import Progress from '../components/progress'
 import './player.less'
+import {Link} from 'react-router'
+import Pubsub from 'pubsub-js'
 
 let duration = null;
 
@@ -10,6 +12,8 @@ class Player extends React.Component{
         this.state = {
             progress: 0,
             volume: 0,
+            leftTime:'',
+            isPlay: true
         };
     }
     componentDidMount(){
@@ -19,9 +23,20 @@ class Player extends React.Component{
             this.setState({
                 volume: e.jPlayer.options.volume*100,
                 progress : e.jPlayer.status.currentPercentAbsolute,
+                leftTime: this.formatTime(duration * (1-e.jPlayer.status.currentPercentAbsolute/100)),
                 isPlay:true
             });
         })
+    }
+
+    formatTime(time){
+        time = Math.floor(time);
+        let minutes =Math.floor(time/60);
+        let seconds= Math.floor(time % 60);
+
+        seconds = seconds<10 ? `0${seconds}` : seconds;
+
+        return `${minutes} : ${seconds}`;
     }
     componentWillUnmount(){
         $('#player').unbind($.jPlayer.event.timeupdate);
@@ -42,10 +57,17 @@ class Player extends React.Component{
             isPlay:!this.state.isPlay
         })
     }
+
+    playPrev(){
+        Pubsub.publish('PLAY_PREV');
+    }
+    playNext(){
+        Pubsub.publish('PLAY_NEXT');
+    }
     render(){
         return(
             <div className='player-page'>
-                <h1 className='caption'>我的私人音乐坊</h1>
+                <h1 className='caption'><Link to='/list'>我的私人音乐坊</Link> </h1>
                 <div className="mt20 row">
                     <div className="controll-wrapper">
                         <h2 className="music-title">{this.props.currentMusicItem.title}</h2>
@@ -60,12 +82,12 @@ class Player extends React.Component{
                         </div>
                         <div style={{height:10,lineHeight:'10px'}}>
                             <Progress progress={this.state.progress} onProgressChange={this.progressChangeHandler.bind(this)} />
-                            <div className="left-time -col-auto">/*{(this.state.time/60).toFixed(0)>10?10:'0'+(this.state.time/60).toFixed(0)} : {((this.state.time).toFixed(0)%60<10) ? '0'+(this.state.time).toFixed(0)%60 : (this.state.time).toFixed(0)%60}*/ s</div>
+                            <div className="left-time -col-auto">{this.state.leftTime}</div>
                         </div>
                         <div className="mt35 row">
                             <div>
                                 <i className="icon prev" onClick={this.playPrev.bind(this)}> </i>
-                                <i className={`icon ml20 ${Math.ceil(this.state.time)>= Math.ceil(duration) ? 'play' : this.state.isPlay ? 'pause':'play'}`} onClick={this.play.bind(this)}> </i>
+                                <i className={`icon ml20 ${this.state.isPlay ? 'pause':'play'}`} onClick={this.play.bind(this)}> </i>
                                 <i className="icon next ml20" onClick={this.playNext.bind(this)}> </i>
                             </div>
                             <div className="-col-auto">
@@ -74,14 +96,13 @@ class Player extends React.Component{
                         </div>
                     </div>
                     <div className='-col-auto cover' >
-                        <img className={`${Math.ceil(this.state.time)>= Math.ceil(duration) ? 'pause' : this.state.isPlay ? '':'pause'}`} src={this.props.currentMusicItem.cover} alt={this.props.currentMusicItem.title}/>
+                        <img  src={this.props.currentMusicItem.cover} alt={this.props.currentMusicItem.title}/>
                     </div>
                 </div>
 
 
                 <div id="player"> </div>
-                <Progress progress={this.state.progress}
-                          onProgressChange={this.progressChangeHandler}> </Progress>
+
             </div>
 
         )
