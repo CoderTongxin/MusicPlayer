@@ -2,8 +2,7 @@ React-music-player
 ===
 A music player build with react, react-router,webpack，ES6
 
-如何运行
-# 下载代码
+#下载代码
                 git clone https://github.com/CoderTongxin/MusicPlayer.git
 #安装依赖
                 npm install
