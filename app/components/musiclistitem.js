@@ -13,6 +13,9 @@ class musicListItem extends React.Component{
     deleteMusic(musicItem , event){
         event.stopPropagation();
         Pubsub.publish('DELETE_MUSIC' , musicItem);
+        if(this.state.currentMusicItem === musicItem){
+            this.playNext('next');
+        }
     }
 
 

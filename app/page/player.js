@@ -42,7 +42,6 @@ class Player extends React.Component{
     }
 
     progressChangeHandler(progressPercent){
-        $('#player').jPlayer('play',duration * progressPercent);
         $('#player').jPlayer(this.state.isPlay?'play':'pause',duration * progressPercent);
     }
 
@@ -51,12 +50,10 @@ class Player extends React.Component{
     }
 
     play(){
-        console.log(this.state.isPlay);
         this.state.isPlay ? $('#player').jPlayer('pause') : $('#player').jPlayer('play');
         this.setState({
             isPlay: !this.state.isPlay
         });
-        console.log(this.state.isPlay)
     }
 
     playPrev(){
@@ -70,6 +67,10 @@ class Player extends React.Component{
         this.setState({
             isPlay:true,
         })
+    }
+
+    changeRepeat(){
+        PubSub.publish('CHANAGE_REPEAT');
     }
     render(){
         return(
@@ -100,7 +101,7 @@ class Player extends React.Component{
                                 <i className="icon next ml20" onClick={this.playNext.bind(this)}> </i>
                             </div>
                             <div className="-col-auto">
-                                <i className="icon repeat-cycle"> </i>
+                                <i className={`icon repeat-${this.props.repeatType}`} onClick={this.changeRepeat}> </i>
                             </div>
                         </div>
                     </div>

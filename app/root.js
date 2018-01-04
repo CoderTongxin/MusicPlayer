@@ -13,7 +13,8 @@ class App extends React.Component {
         this.state = {
             musicList: MUSIC_LIST,
             currentMusicItem: MUSIC_LIST[0],
-            isPlay: null
+            isPlay: null,
+            repeatType: 'cycle'
         }
     }
 
@@ -27,6 +28,7 @@ class App extends React.Component {
     }
 
     playNext(type = 'text') {
+
         let index = this.findMusicIndex(this.state.currentMusicItem);
         let newIndex = null;
         let length = this.state.musicList.length;
@@ -38,11 +40,38 @@ class App extends React.Component {
         this.playMusic(this.state.musicList[newIndex])
     }
 
+    getRandomValue(min,max){
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    playWhenEnd(){
+
+        if(this.state.repeatType==='random'){
+            let length=this.state.musicList.length-1;
+            let index=this.findMusicIndex(this.state.currentMusicItem);
+            let randomIndex=this.getRandomValue(0, length);
+            while(index===randomIndex){
+                randomIndex = this.getRandomValue(0, length);
+            }
+            this.playMusic(this.state.musicList[randomIndex]);
+        }else if(this.state.repeatType==='once'){
+            this.playMusic(this.state.currentMusicItem);
+        }else{
+            this.playNext('next');
+        }
+    }
+
     findMusicIndex(musicItem) {
         return this.state.musicList.indexOf(musicItem);
     }
 
     componentDidMount() {
+
+        let repeatList = [
+            'cycle',
+            'once',
+            'random'
+        ];
 
         $('#player').jPlayer({
             supplied: 'mp3',
@@ -50,9 +79,11 @@ class App extends React.Component {
         });
 
         this.playMusic(this.state.currentMusicItem);
+
         $('#player').bind($.jPlayer.event.ended, (e) => {
-            this.playNext();
+            this.playWhenEnd();
         });
+
         Pubsub.subscribe('PLAY_MUSIC', (msg, musicItem) => {
             this.playMusic(musicItem)
         });
@@ -80,6 +111,16 @@ class App extends React.Component {
         });
         Pubsub.subscribe('PLAY_NEXT', (msg) => {
             this.playNext('next')
+        });
+
+        Pubsub.subscribe('CHANAGE_REPEAT',(msg)=>{
+
+            let index=repeatList.indexOf(this.state.repeatType);
+            index=(index+1)%repeatList.length;
+            this.setState({
+                repeatType:repeatList[index],
+                isPlay: true
+            });
         })
     }
 
@@ -90,6 +131,7 @@ class App extends React.Component {
         Pubsub.unsubscribe('PLAY_PREV');
         Pubsub.unsubscribe('PLAY_NEXT');
         Pubsub.unsubscribe('IS_PLAY');
+        Pubsub.unsubscribe('CHANAGE_REPEAT');
         $('#player').unbind($.jPlayer.event.ended)
     }
 
