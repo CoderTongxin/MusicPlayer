@@ -2,11 +2,9 @@ React-music-player
 ===
 A music player build with react, react-router,webpack，ES6
 
-实现的功能有音乐播放、上一曲、下一曲、播放进度控制、音量大小控制、播放列表、 歌曲删除、点击播放对应歌曲。
-
 如何运行
 # 下载代码
-                git clone https://github.com/junhey/React-Music-Player.git
+                git clone https://github.com/CoderTongxin/MusicPlayer.git
 #安装依赖
                 npm install
 #项目启动
