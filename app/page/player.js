@@ -1,6 +1,7 @@
 import React from 'react'
 import Progress from '../components/progress'
 import './player.less'
+import Background from '../components/background';
 import {Link} from 'react-router'
 import Pubsub from 'pubsub-js'
 
@@ -13,18 +14,16 @@ class Player extends React.Component{
             progress: 0,
             volume: 0,
             leftTime:'',
-            isPlay: true
+            isPlay:true
         };
     }
     componentDidMount(){
-
         $('#player').bind($.jPlayer.event.timeupdate, (e) =>{
             duration = e.jPlayer.status.duration;
             this.setState({
                 volume: e.jPlayer.options.volume*100,
                 progress : e.jPlayer.status.currentPercentAbsolute,
                 leftTime: this.formatTime(duration * (1-e.jPlayer.status.currentPercentAbsolute/100)),
-                isPlay:true
             });
         })
     }
@@ -52,20 +51,30 @@ class Player extends React.Component{
     }
 
     play(){
+        console.log(this.state.isPlay);
         this.state.isPlay ? $('#player').jPlayer('pause') : $('#player').jPlayer('play');
         this.setState({
-            isPlay:!this.state.isPlay
-        })
+            isPlay: !this.state.isPlay
+        });
+        console.log(this.state.isPlay)
     }
 
     playPrev(){
         Pubsub.publish('PLAY_PREV');
+        this.setState({
+            isPlay:true,
+        })
     }
     playNext(){
         Pubsub.publish('PLAY_NEXT');
+        this.setState({
+            isPlay:true,
+        })
     }
     render(){
         return(
+            <div>
+            <Background bg={this.props.currentMusicItem.cover}/>
             <div className='player-page'>
                 <h1 className='caption'><Link to='/list'>我的私人音乐坊</Link> </h1>
                 <div className="mt20 row">
@@ -76,7 +85,7 @@ class Player extends React.Component{
                             <div className="volume-container">
                                 <i className="icon-volume rt" style={{top:5,left:-5}}> </i>
                                 <div className="volume-wrapper">
-                                    <Progress progress={this.state.volume} onProgressChange={this.changeVolumeHandler} barColor="#aaa"/>
+                                    <Progress progress={this.state.volume} onProgressChange={this.changeVolumeHandler} barColor='green'/>
                                 </div>
                             </div>
                         </div>
@@ -99,12 +108,8 @@ class Player extends React.Component{
                         <img  src={this.props.currentMusicItem.cover} alt={this.props.currentMusicItem.title}/>
                     </div>
                 </div>
-
-
-                <div id="player"> </div>
-
             </div>
-
+            </div>
         )
     }
 

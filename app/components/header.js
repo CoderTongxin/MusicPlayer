@@ -6,8 +6,8 @@ class Header extends React.Component{
     render(){
         return(
             <div className="components-header row">
-            <img  src='/static/images/logo.jpeg' width='40' alt='' className='-col-auto'/>
-                <h1 className='caption'>React Music Player</h1>
+            <img  src='/static/images/logo.png' width='40' alt='' className='-col-auto'/>
+                <h1 className='caption'>Panda Music Gallery</h1>
             </div>
 
         );

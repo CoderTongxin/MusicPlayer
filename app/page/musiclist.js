@@ -6,7 +6,7 @@ class MusicList extends React.Component{
       let listEle=null;
 
       listEle = this.props.musicList.map((item) => {
-          return <MusicListItem key={item.id} musicItem={item} focus={item === this.props.currentMusicItem} />
+          return (<MusicListItem key={item.id} musicItem={item} focus={item === this.props.currentMusicItem} />)
       });
 
       return (

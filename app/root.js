@@ -69,6 +69,7 @@ class App extends React.Component {
 
         });
 
+
         Pubsub.subscribe('IS_PLAY', (msg, isPlay) => {
             this.setState({
                 isPlay: true
